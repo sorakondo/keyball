@@ -18,8 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 
-#include "keymap_jp.h"
-
 #include "quantum.h"
 
 enum custom_keycodes {
