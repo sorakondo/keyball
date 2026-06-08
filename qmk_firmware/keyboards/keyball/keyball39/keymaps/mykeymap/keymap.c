@@ -26,13 +26,13 @@ enum custom_keycodes {
     MY_LBRC,              // [ → 自動で [] 入力してカーソルを中に移動
     MY_LCBR,              // { → 自動で {} 入力してカーソルを中に移動
     MY_LABK,              // < → 自動で <> 入力してカーソルを中に移動
-    MY_SCRL_K,            // タップでK、ホールドでスクロールモード
+    MY_SCRL_COMM,         // タップでカンマ、ホールドでスクロールモード
 };
 
-static uint16_t scroll_k_timer = 0;
-static bool     scroll_k_held  = false; // K が押されていて未確定の状態
-static bool     scroll_k_sent  = false; // 別キー割り込みで K を先送り済み
-static bool     scroll_k_fired = false; // スクロールモードが発動済み
+static uint16_t scroll_comm_timer = 0;
+static bool     scroll_comm_held  = false; // カンマが押されていて未確定の状態
+static bool     scroll_comm_sent  = false; // 別キー割り込みでカンマを先送り済み
+static bool     scroll_comm_fired = false; // スクロールモードが発動済み
 
 // IME状態をエミュレートする変数
 static bool is_ime_on = true; // デフォルトはIME ONと仮定
@@ -65,11 +65,11 @@ static void update_ime_state(uint16_t keycode, keyrecord_t *record) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     update_ime_state(keycode, record);
 
-    // K が保留中に別キーが押されたら、K を先に送出して順番を保つ
-    if (scroll_k_held && !scroll_k_fired && record->event.pressed && keycode != MY_SCRL_K) {
-        scroll_k_held = false;
-        scroll_k_sent = true;
-        tap_code(KC_K);
+    // カンマが保留中に別キーが押されたら、カンマを先に送出して順番を保つ
+    if (scroll_comm_held && !scroll_comm_fired && record->event.pressed && keycode != MY_SCRL_COMM) {
+        scroll_comm_held = false;
+        scroll_comm_sent = true;
+        tap_code(KC_COMM);
     }
 
     switch (keycode) {
@@ -113,24 +113,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code(KC_LEFT);      // 中に戻る
             }
             return false;
-        case MY_SCRL_K:
+        case MY_SCRL_COMM:
             if (record->event.pressed) {
-                scroll_k_timer = timer_read();
-                scroll_k_held  = true;
-                scroll_k_fired = false;
-                scroll_k_sent  = false;
+                scroll_comm_timer = timer_read();
+                scroll_comm_held  = true;
+                scroll_comm_fired = false;
+                scroll_comm_sent  = false;
             } else {
-                scroll_k_held = false;
-                if (scroll_k_fired) {
+                scroll_comm_held = false;
+                if (scroll_comm_fired) {
                     // ホールドだった → スクロール解除
                     if (get_highest_layer(layer_state) != 3) {
                         keyball_set_scroll_mode(false);
                     }
-                } else if (!scroll_k_sent) {
-                    // 単独タップ（他キー割り込みなし）→ K を送出
-                    tap_code(KC_K);
+                } else if (!scroll_comm_sent) {
+                    // 単独タップ（他キー割り込みなし）→ カンマを送出
+                    tap_code(KC_COMM);
                 }
-                // scroll_k_sent == true の場合は別キー処理時に既に送出済み
+                // scroll_comm_sent == true の場合は別キー処理時に既に送出済み
             }
             return false;
     }
@@ -138,17 +138,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void matrix_scan_user(void) {
-    // TAPPING_TERM 経過後もKが保留中ならスクロールモードを発動
-    if (scroll_k_held && !scroll_k_fired && timer_elapsed(scroll_k_timer) >= TAPPING_TERM) {
-        scroll_k_fired = true;
-        scroll_k_held  = false;
+    // TAPPING_TERM 経過後もカンマが保留中ならスクロールモードを発動
+    if (scroll_comm_held && !scroll_comm_fired && timer_elapsed(scroll_comm_timer) >= TAPPING_TERM) {
+        scroll_comm_fired = true;
+        scroll_comm_held  = false;
         keyball_set_scroll_mode(true);
     }
 }
 
 #ifdef COMBO_ENABLE
-const uint16_t PROGMEM combo_jk[] = {KC_J, MY_SCRL_K, COMBO_END};
-const uint16_t PROGMEM combo_kl[] = {MY_SCRL_K, KC_L, COMBO_END};
+const uint16_t PROGMEM combo_jk[] = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM combo_kl[] = {KC_K, KC_L, COMBO_END};
 combo_t key_combos[] = {
     COMBO(combo_jk, KC_BTN1),
     COMBO(combo_kl, KC_BTN2),
@@ -160,8 +160,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // keymap for default (VIA)
   [0] = LAYOUT_universal(
     KC_Q     , KC_W     , KC_E     , KC_R     , KC_T     ,                            KC_Y     , KC_U     , KC_I     , KC_O     , KC_P     ,
-    MT(MOD_LCTL,KC_A),MT(MOD_LSFT,KC_S), MT(MOD_LALT,KC_D), MT(MOD_LSFT,KC_F), KC_G,  KC_H     , KC_J     , MY_SCRL_K, KC_L     , MT(MOD_RCTL,KC_ENT),
-    KC_Z     , KC_X     , KC_C     , KC_V     , KC_B     ,                            KC_N     , KC_M     , KC_COMM  , KC_DOT   , KC_SLSH  ,
+    MT(MOD_LCTL,KC_A),MT(MOD_LSFT,KC_S), MT(MOD_LALT,KC_D), MT(MOD_LSFT,KC_F), KC_G,  KC_H     , KC_J     , KC_K     , KC_L     , MT(MOD_RCTL,KC_ENT),
+    KC_Z     , KC_X     , KC_C     , KC_V     , KC_B     ,                            KC_N     , KC_M     , MY_SCRL_COMM, KC_DOT   , KC_SLSH  ,
     KC_LCTL  , KC_LGUI  , KC_LALT  ,LT(1,KC_LNG2),MT(MOD_LSFT,KC_SPC),LT(3,KC_TAB),KC_BSPC,LT(2,KC_LNG1), _______  , _______  , _______  , KC_ESC
   ),
 
