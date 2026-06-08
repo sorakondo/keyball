@@ -41,10 +41,10 @@ static void update_ime_state(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         switch (keycode) {
             case KC_LNG1:
-                is_ime_on = false;
+                is_ime_on = true;
                 break;
             case KC_LNG2:
-                is_ime_on = true;
+                is_ime_on = false;
                 break;
         }
         return;
@@ -53,10 +53,10 @@ static void update_ime_state(uint16_t keycode, keyrecord_t *record) {
     if (record->tap.count) {
         switch (keycode) {
             case LT(2, KC_LNG1):
-                is_ime_on = false;
+                is_ime_on = true;
                 break;
             case LT(1, KC_LNG2):
-                is_ime_on = true;
+                is_ime_on = false;
                 break;
         }
     }
