@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
+#include "keymap_jp.h"
 
 enum custom_keycodes {
     MY_LPRN = SAFE_RANGE, // ( → 自動で () 入力してカーソルを中に移動
@@ -124,7 +125,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [1] = LAYOUT_universal(
       KC_ESC    , S(KC_6)    , S(KC_7), S(KC_8)    , KC_SLSH  ,                         KC_BSLS, MY_LPRN  , S(KC_9)  , MY_LABK     , S(KC_DOT),
-    S(KC_EQL)   , S(KC_4)  , S(KC_5)  ,KC_EQL, S(KC_MINS)  ,                           S(KC_BSLS), MY_LCBR    , S(KC_LBRC), KC_SCLN  ,KC_QUOT,
+    S(KC_EQL)   , S(KC_4)  , S(KC_5)  ,KC_EQL, S(KC_MINS)  ,                           JP_UNDS, MY_LCBR    , JP_RBRC, KC_SCLN  ,KC_QUOT,
     KC_MINS,S(KC_1),KC_LBRC   , S(KC_3)  ,S(KC_SLSH),                            KC_NUHS   , MY_LBRC   , KC_BSLS  , S(KC_7)  , S(KC_2)   ,
     _______  , _______   , _______  , _______  , _______  , _______  ,      _______    , _______   , _______  , _______  , _______  , _______
   ),
