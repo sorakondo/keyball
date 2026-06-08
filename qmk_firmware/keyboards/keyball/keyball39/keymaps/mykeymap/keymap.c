@@ -34,7 +34,37 @@ static bool     scroll_k_held  = false; // K が押されていて未確定の�
 static bool     scroll_k_sent  = false; // 別キー割り込みで K を先送り済み
 static bool     scroll_k_fired = false; // スクロールモードが発動済み
 
+// IME状態をエミュレートする変数
+static bool is_ime_on = true; // デフォルトはIME ONと仮定
+
+static void update_ime_state(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        switch (keycode) {
+            case KC_LNG1:
+                is_ime_on = true;
+                break;
+            case KC_LNG2:
+                is_ime_on = false;
+                break;
+        }
+        return;
+    }
+
+    if (record->tap.count) {
+        switch (keycode) {
+            case LT(2, KC_LNG1):
+                is_ime_on = true;
+                break;
+            case LT(1, KC_LNG2):
+                is_ime_on = false;
+                break;
+        }
+    }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    update_ime_state(keycode, record);
+
     // K が保留中に別キーが押されたら、K を先に送出して順番を保つ
     if (scroll_k_held && !scroll_k_fired && record->event.pressed && keycode != MY_SCRL_K) {
         scroll_k_held = false;
@@ -47,28 +77,40 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 tap_code16(S(KC_8));  // (
                 tap_code16(S(KC_9));  // )
-                tap_code(KC_LEFT);
+                if (is_ime_on) {
+                    tap_code(KC_ENT);     // IME ON なら確定
+                }
+                tap_code(KC_LEFT);    // 確定したカッコの中にカーソルを戻す
             }
             return false;
         case MY_LBRC:
             if (record->event.pressed) {
                 tap_code16(KC_RBRC);  // [
                 tap_code16(KC_NUHS);  // ]
-                tap_code(KC_LEFT);
+                if (is_ime_on) {
+                    tap_code(KC_ENT);     // 確定
+                }
+                tap_code(KC_LEFT);    // 中に戻る
             }
             return false;
         case MY_LCBR:
             if (record->event.pressed) {
                 tap_code16(S(KC_RBRC)); // {
                 tap_code16(S(KC_NUHS)); // }
-                tap_code(KC_LEFT);
+                if (is_ime_on) {
+                    tap_code(KC_ENT);       // 確定
+                }
+                tap_code(KC_LEFT);      // 中に戻る
             }
             return false;
         case MY_LABK:
             if (record->event.pressed) {
                 tap_code16(S(KC_COMM)); // <
                 tap_code16(S(KC_DOT));  // >
-                tap_code(KC_LEFT);
+                if (is_ime_on) {
+                    tap_code(KC_ENT);       // 確定
+                }
+                tap_code(KC_LEFT);      // 中に戻る
             }
             return false;
         case MY_SCRL_K:
