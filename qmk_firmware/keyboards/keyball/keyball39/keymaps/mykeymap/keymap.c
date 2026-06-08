@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
-#include "keymap_extras/keymap_jp.h"
+#include "keymap_japanese.h"
 
 enum custom_keycodes {
     MY_LPRN = SAFE_RANGE, // ( → 自動で () 入力してカーソルを中に移動
