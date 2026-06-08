@@ -115,7 +115,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_BRIU  , KC_F7   , KC_F8   , KC_F9  , KC_F10  ,                            S(G(KC_LEFT))  , S(G(KC_DOWN))  , S(G(KC_UP)) ,S(G(KC_RGHT))  , _______ , 
     KC_BRID  , KC_F4  , KC_F5  , KC_F6  , KC_F11  ,                            G(KC_LEFT)  , G(KC_DOWN)  , G(KC_UP)  , G(KC_RGHT)  , _______  ,
     KC_PSCR , KC_F1   , KC_F2  , KC_F3  , KC_F12  ,                            LALT(KC_LEFT)  , KC_BTN1  , _______  , KC_BTN2  , _______ ,
-    KC_RCTL  , _______  , _______  , _______  , _______  , _______  ,      _______  , _______  , _______  , _______  , _______  , _______
+    KC_RCTL  , _______   , _______  , _______  , _______  , _______  ,      _______  , _______  , _______  , _______  , _______  , EE_CLR
   ),
 };
 // clang-format on
