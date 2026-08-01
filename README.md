@@ -40,4 +40,25 @@ See [document for firmware source code](./qmk_firmware/keyboards/keyball/readme.
 
 ### Pre-compiled Firmwares
 
-(TO BE DOCUMENTED)
+#### GitHub Actionsでビルドして書き込む
+
+Keyball39の `mykeymap` を使用する場合は、次の手順でGitHub Actionsからファームウェアを作成できます。
+
+1. キーマップの変更をGitHubへpushします。ファームウェア関連ファイルの変更を検知すると、GitHub Actionsの `Build keyball39 mykeymap` が自動的に実行されます。
+2. GitHubリポジトリの **Actions** タブから該当する実行結果を開き、処理が完了するまで待ちます。
+3. 実行結果の **Artifacts** から `keyball39-mykeymap-firmware` をダウンロードし、ZIPファイルを展開します。
+4. 展開した `.hex` ファイルを、[Pro Micro Web Updater](https://sekigon-gonnoc.github.io/promicro-web-updater/)で書き込みます。
+5. USBケーブルで片側のPro Microを接続し、Web UpdaterでHEXファイルを選択して書き込みます。認識されない場合は、Pro MicroのRESETとGNDを短く2回接触させてブートローダーを起動してください。
+6. 左右それぞれのPro Microに、同じ `.hex` ファイルを書き込んでください。
+
+書き込みには、WebUSBに対応したブラウザ（Chrome、Edgeなど）を使用してください。
+
+## Keyball39のキーマップ編集
+
+Keyball39を使用する場合、キー配置やキーマップの動作は次のファイルを中心に編集します。
+
+```text
+qmk_firmware/keyboards/keyball/keyball39/keymaps/mykeymap/keymap.c
+```
+
+このファイルには、キー配置、レイヤー、カスタムキーコード、コンボなどを記述します。
