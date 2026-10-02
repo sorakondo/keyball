@@ -54,8 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // RGB LED settings
 #define WS2812_DI_PIN       D3
 #ifdef RGBLIGHT_ENABLE
-#    define RGBLED_NUM      48
-#    define RGBLED_SPLIT    { 24, 24 }  // (24 + 22)
+#    define RGBLED_NUM      58
+#    define RGBLED_SPLIT    { 29, 29 }  // (29 + 26)
 #    ifndef RGBLIGHT_LIMIT_VAL
 #        define RGBLIGHT_LIMIT_VAL  150 // limitated for power consumption
 #    endif
@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    endif
 #endif
 #ifdef RGB_MATRIX_ENABLE
-#    define RGB_MATRIX_SPLIT    { 24, 24 }
+#    define RGB_MATRIX_SPLIT    { 29, 29 }
 #endif
 
 #ifndef OLED_FONT_H
