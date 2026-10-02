@@ -22,11 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "keymap_japanese.h"
 
 enum custom_keycodes {
-    MY_LPRN = SAFE_RANGE, // ( → 自動で () 入力してカーソルを中に移動
-    MY_LBRC,              // [ → 自動で [] 入力してカーソルを中に移動
-    MY_LCBR,              // { → 自動で {} 入力してカーソルを中に移動
-    MY_LABK,              // < → 自動で <> 入力してカーソルを中に移動
-    MY_SCRL_COMM,         // タップでカンマ、ホールドでスクロールモード
+    MY_SCRL_COMM = SAFE_RANGE, // タップでカンマ、ホールドでスクロールモード
 };
 
 static uint16_t scroll_comm_timer = 0;
@@ -34,37 +30,7 @@ static bool     scroll_comm_held  = false; // カンマが押されていて未�
 static bool     scroll_comm_sent  = false; // 別キー割り込みでカンマを先送り済み
 static bool     scroll_comm_fired = false; // スクロールモードが発動済み
 
-// IME状態をエミュレートする変数
-static bool is_ime_on = true; // デフォルトはIME ONと仮定
-
-static void update_ime_state(uint16_t keycode, keyrecord_t *record) {
-    if (record->event.pressed) {
-        switch (keycode) {
-            case KC_LNG1:
-                is_ime_on = true;
-                break;
-            case KC_LNG2:
-                is_ime_on = false;
-                break;
-        }
-        return;
-    }
-
-    if (record->tap.count) {
-        switch (keycode) {
-            case LT(2, KC_LNG1):
-                is_ime_on = true;
-                break;
-            case LT(1, KC_LNG2):
-                is_ime_on = false;
-                break;
-        }
-    }
-}
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    update_ime_state(keycode, record);
-
     // カンマが保留中に別キーが押されたら、カンマを先に送出して順番を保つ
     if (scroll_comm_held && !scroll_comm_fired && record->event.pressed && keycode != MY_SCRL_COMM) {
         scroll_comm_held = false;
@@ -73,46 +39,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     switch (keycode) {
-        case MY_LPRN:
-            if (record->event.pressed) {
-                tap_code16(S(KC_8));  // (
-                tap_code16(S(KC_9));  // )
-                if (is_ime_on) {
-                    tap_code(KC_ENT);     // IME ON なら確定
-                }
-                tap_code(KC_LEFT);    // 確定したカッコの中にカーソルを戻す
-            }
-            return false;
-        case MY_LBRC:
-            if (record->event.pressed) {
-                tap_code16(KC_RBRC);  // [
-                tap_code16(KC_NUHS);  // ]
-                if (is_ime_on) {
-                    tap_code(KC_ENT);     // 確定
-                }
-                tap_code(KC_LEFT);    // 中に戻る
-            }
-            return false;
-        case MY_LCBR:
-            if (record->event.pressed) {
-                tap_code16(S(KC_RBRC)); // {
-                tap_code16(S(KC_NUHS)); // }
-                if (is_ime_on) {
-                    tap_code(KC_ENT);       // 確定
-                }
-                tap_code(KC_LEFT);      // 中に戻る
-            }
-            return false;
-        case MY_LABK:
-            if (record->event.pressed) {
-                tap_code16(S(KC_COMM)); // <
-                tap_code16(S(KC_DOT));  // >
-                if (is_ime_on) {
-                    tap_code(KC_ENT);       // 確定
-                }
-                tap_code(KC_LEFT);      // 中に戻る
-            }
-            return false;
         case MY_SCRL_COMM:
             if (record->event.pressed) {
                 scroll_comm_timer = timer_read();
@@ -166,9 +92,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [1] = LAYOUT_universal(
-      KC_ESC    , S(KC_6)    , S(KC_7), S(KC_8)    , KC_SLSH  ,                         JP_BSLS, MY_LPRN  , S(KC_9)  , MY_LABK     , S(KC_DOT),
-    S(KC_EQL)   , S(KC_4)  , S(KC_5)  ,KC_EQL, S(KC_MINS)  ,                           JP_UNDS, MY_LCBR    , JP_RBRC, KC_SCLN  ,KC_QUOT,
-    KC_MINS,S(KC_1),KC_LBRC   , S(KC_3)  ,S(KC_SLSH),                            KC_NUHS   , MY_LBRC   , JP_BSLS  , S(KC_7)  , S(KC_2)   ,
+      KC_ESC    , S(KC_6)    , S(KC_7), S(KC_8)    , KC_SLSH  ,                         JP_BSLS, JP_LPRN  , S(KC_9)  , JP_LABK     , S(KC_DOT),
+    S(KC_EQL)   , S(KC_4)  , S(KC_5)  ,KC_EQL, S(KC_MINS)  ,                           JP_UNDS, JP_LCBR    , JP_RCBR, KC_SCLN  ,KC_QUOT,
+    KC_MINS,S(KC_1),KC_LBRC   , S(KC_3)  ,S(KC_SLSH),                            KC_NUHS   , JP_LBRC   , JP_BSLS  , S(KC_7)  , S(KC_2)   ,
     _______  , _______   , _______  , _______  , _______  , _______  ,      _______    , _______   , _______  , _______  , _______  , _______
   ),
 
