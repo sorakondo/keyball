@@ -75,9 +75,11 @@ void matrix_scan_user(void) {
 #ifdef COMBO_ENABLE
 const uint16_t PROGMEM combo_jk[] = {KC_J, KC_K, COMBO_END};
 const uint16_t PROGMEM combo_kl[] = {KC_K, KC_L, COMBO_END};
+const uint16_t PROGMEM combo_m_comm[] = {KC_M, MY_SCRL_COMM, COMBO_END};
 combo_t key_combos[] = {
     COMBO(combo_jk, KC_BTN1),
     COMBO(combo_kl, KC_BTN2),
+    COMBO(combo_m_comm, KC_BTN3), // M + comma: middle click
 };
 #endif
 
